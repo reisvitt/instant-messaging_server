@@ -23,8 +23,8 @@ Este projeto faz parte da disciplina de Redes 2 e tem como objetivo a criação 
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/reisvitt/TCP-UDP-Instant-Messaging-SERVER.git
-   cd TCP-UDP-Instant-Messaging-SERVER
+   git clone https://github.com/reisvitt/instant-messaging_server.git
+   cd instant-messaging_server
    ```
 
 2. Der permissão de execução para o start.sh:
