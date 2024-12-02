@@ -1,3 +1,12 @@
+/* ***************************************************************
+* Autor............: Vitor Reis
+* Matricula........: 201710793
+* Inicio...........: 16/08/2024
+* Ultima alteracao.: 01/12/2024
+* Nome.............: GroupsStore
+* Funcao...........: Armazena em tempo de execução todos os grupos e seus integrantes
+*************************************************************** */
+
 package src.data.repository;
 
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
 package src.presentation.endpoints;
 
+import src.domain.enums.Protocol;
 import src.domain.models.Client;
 import src.domain.models.Server;
 import src.domain.models.abstracts.EndpointListener;
@@ -21,6 +22,6 @@ public class MyGroups extends EndpointListener {
     String groups = this.groupService.listMyGroup(client);
 
     String dataToSend = data + ":" + groups;
-    server.send(client, dataToSend);
+    server.send(Protocol.UDP, client, dataToSend);
   }
 }

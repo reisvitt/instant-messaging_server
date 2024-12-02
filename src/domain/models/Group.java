@@ -1,3 +1,11 @@
+/* ***************************************************************
+* Autor............: Vitor Reis
+* Matricula........: 201710793
+* Inicio...........: 16/08/2024
+* Ultima alteracao.: 01/12/2024
+* Nome.............: Group
+* Funcao...........: Representação do Grupo
+*************************************************************** */
 package src.domain.models;
 
 import java.util.ArrayList;
