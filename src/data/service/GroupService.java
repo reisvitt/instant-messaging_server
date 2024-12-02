@@ -1,8 +1,18 @@
+/* ***************************************************************
+* Autor............: Vitor Reis
+* Matricula........: 201710793
+* Inicio...........: 16/08/2024
+* Ultima alteracao.: 01/12/2024
+* Nome.............: GroupService
+* Funcao...........: Serviços do servidor
+*************************************************************** */
+
 package src.data.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import src.domain.enums.Protocol;
 import src.domain.models.Client;
 import src.domain.models.Group;
 import src.domain.models.Server;
@@ -16,6 +26,13 @@ public class GroupService {
     this.groupRepository = groupRepository;
   }
 
+  /*
+   * ***************************************************************
+   * Metodo: listMyGroup
+   * Funcao: Lista os grupos de um cliente
+   * Parametros: Cliente
+   * Retorno: String com uma listagem de grupos separadas por virgula
+   */
   public String listMyGroup(Client client) {
 
     String groupNames = this.groupRepository.getGroups().stream()
@@ -26,6 +43,14 @@ public class GroupService {
     return groupNames;
   }
 
+  /*
+   * ***************************************************************
+   * Metodo: joinGroup
+   * Funcao: Insere Cliente a um grupo e envia mensagem para no grupo informando
+   * um novo integrante
+   * Parametros: Server, Cliente e mensagem com o grupo
+   * Retorno: void
+   */
   public void joinGroup(Server server, Client client, String data) {
     data = GetData.getUtil(data);
     String[] parts = data.split(":"); // ["grupox"]
@@ -33,7 +58,7 @@ public class GroupService {
     String groupName = parts[0];
     String userIp = client.getIp();
 
-    if (!this.groupRepository.exist(groupName)) { // neets to create
+    if (!this.groupRepository.exist(groupName)) { // needs to create
       this.groupRepository.addByName(groupName);
     }
 
@@ -45,17 +70,25 @@ public class GroupService {
       System.out.println(userIp + " joined group: " + group.getName());
 
       // send to others user the message
-      String dataToSend = "SEND " + groupName + ":" + server.getIp() + ":" + client.getIp() + " joined group";
+      String dataToSend = "SEND " + groupName + ":" + server.getIp(Protocol.TCP) + ":" + client.getIp()
+          + " joined group";
       List<Client> clients = group.getClients().stream().filter(clt -> !clt.getIp().equals(client.getIp()))
           .collect(Collectors.toList());
-      server.sendToClients(clients, dataToSend);
+      server.sendToClients(Protocol.UDP, clients, dataToSend);
     } else {
       System.out.println(userIp + " already in group: " + group.getName());
-      server.send(client, "ERROR You already in this group");
+      server.send(Protocol.UDP, client, "ERROR You already in this group");
     }
 
   }
 
+  /*
+   * ***************************************************************
+   * Metodo: leaveAllGroup
+   * Funcao: Remove Cliente de todos os grupo.
+   * Parametros: Server, Cliente e mensagem com o grupo
+   * Retorno: void
+   */
   public void leaveAllGroup(Server server, Client client, String data) {
     for (Group group : this.groupRepository.getGroups()) {
       if (group.hasClient(client)) {
@@ -64,6 +97,14 @@ public class GroupService {
     }
   }
 
+  /*
+   * ***************************************************************
+   * Metodo: leaveGroup
+   * Funcao: Remove Cliente de um grupo e envia mensagem para no grupo informando
+   * um novo integrante
+   * Parametros: Server, Cliente e mensagem com o grupo
+   * Retorno: void
+   */
   public void leaveGroup(Server server, Client client, String data) {
     data = GetData.getUtil(data);
     String[] parts = data.split(":"); // ["grupox"]
@@ -83,17 +124,24 @@ public class GroupService {
       System.out.println(userIp + " left group: " + group.getName());
 
       // send to others user the message
-      String dataToSend = "SEND " + groupName + ":" + server.getIp() + ":" + client.getIp() + " left group";
+      String dataToSend = "SEND " + groupName + ":" + server.getIp(Protocol.TCP) + ":" + client.getIp() + " left group";
       List<Client> clients = group.getClients().stream().filter(clt -> !clt.getIp().equals(client.getIp()))
           .collect(Collectors.toList());
-      server.sendToClients(clients, dataToSend);
+      server.sendToClients(Protocol.UDP, clients, dataToSend);
 
     } else {
       System.out.println(userIp + " isnt in group: " + group.getName());
-      server.send(client, "ERROR You isnt in this group");
+      server.send(Protocol.UDP, client, "ERROR You isnt in this group");
     }
   }
 
+  /*
+   * ***************************************************************
+   * Metodo: sendMessage
+   * Funcao: Envia mensagem de um Cliente a um grupo
+   * Parametros: Server, Cliente e mensagem
+   * Retorno: void
+   */
   public void sendMessage(Server server, Client client, String data) {
     data = GetData.getUtil(data);
     System.out.println("Util: " + data);
@@ -120,7 +168,6 @@ public class GroupService {
         .filter(clt -> !clt.getIp().equals(client.getIp()))
         .collect(Collectors.toList());
 
-    server.sendToClients(clients, sendData);
+    server.sendToClients(Protocol.UDP, clients, sendData);
   }
-
 }
